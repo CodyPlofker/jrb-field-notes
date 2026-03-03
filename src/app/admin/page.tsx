@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { Store, TeamMember } from "@/lib/types";
 
 export default function AdminPage() {
@@ -19,8 +19,8 @@ export default function AdminPage() {
 
   const loadData = async () => {
     const [stRes, tmRes] = await Promise.all([
-      supabase.from("stores").select("*").order("name"),
-      supabase.from("team_members").select("*, stores(name)").order("name"),
+      getSupabase().from("stores").select("*").order("name"),
+      getSupabase().from("team_members").select("*, stores(name)").order("name"),
     ]);
     if (stRes.data) setStores(stRes.data);
     if (tmRes.data) setTeamMembers(tmRes.data);
@@ -34,21 +34,21 @@ export default function AdminPage() {
   const addStore = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newStoreName.trim()) return;
-    await supabase.from("stores").insert({ name: newStoreName.trim() });
+    await getSupabase().from("stores").insert({ name: newStoreName.trim() });
     setNewStoreName("");
     loadData();
   };
 
   const deleteStore = async (id: string) => {
     if (!confirm("Delete this store? All associated team members will also be removed.")) return;
-    await supabase.from("stores").delete().eq("id", id);
+    await getSupabase().from("stores").delete().eq("id", id);
     loadData();
   };
 
   const addMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMemberName.trim() || !newMemberStore) return;
-    await supabase.from("team_members").insert({
+    await getSupabase().from("team_members").insert({
       name: newMemberName.trim(),
       store_id: newMemberStore,
       role: newMemberRole,
@@ -61,7 +61,7 @@ export default function AdminPage() {
 
   const deleteMember = async (id: string) => {
     if (!confirm("Remove this team member?")) return;
-    await supabase.from("team_members").delete().eq("id", id);
+    await getSupabase().from("team_members").delete().eq("id", id);
     loadData();
   };
 

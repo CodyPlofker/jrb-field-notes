@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 interface LeaderboardEntry {
   team_member_id: string;
@@ -36,7 +36,7 @@ export default function LeaderboardPage() {
       }
 
       // Fetch all feedback with member info
-      let query = supabase
+      let query = getSupabase()
         .from("feedback")
         .select("team_member_id, created_at, team_members(name, stores(name))");
 

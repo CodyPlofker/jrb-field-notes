@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { Feedback, TeamMember, Store, CATEGORIES } from "@/lib/types";
 
 export default function FeedPage() {
@@ -18,13 +18,13 @@ export default function FeedPage() {
   useEffect(() => {
     async function load() {
       const [fbRes, tmRes, stRes] = await Promise.all([
-        supabase
+        getSupabase()
           .from("feedback")
           .select("*, team_members(name, role, store_id, stores(name))")
           .order("created_at", { ascending: false })
           .limit(200),
-        supabase.from("team_members").select("*").order("name"),
-        supabase.from("stores").select("*").order("name"),
+        getSupabase().from("team_members").select("*").order("name"),
+        getSupabase().from("stores").select("*").order("name"),
       ]);
       if (fbRes.data) setFeedback(fbRes.data);
       if (tmRes.data) setTeamMembers(tmRes.data);

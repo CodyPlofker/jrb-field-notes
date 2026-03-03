@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { TeamMember, CATEGORIES } from "@/lib/types";
 import VoiceInput from "@/components/VoiceInput";
 
@@ -16,7 +16,7 @@ export default function SubmitPage() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
+      const { data } = await getSupabase()
         .from("team_members")
         .select("*, stores(name)")
         .order("name");
@@ -45,7 +45,7 @@ export default function SubmitPage() {
     if (!selectedMember || !category || !content.trim()) return;
 
     setSubmitting(true);
-    const { error } = await supabase.from("feedback").insert({
+    const { error } = await getSupabase().from("feedback").insert({
       team_member_id: selectedMember,
       category,
       content: content.trim(),
